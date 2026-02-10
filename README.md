@@ -1,22 +1,22 @@
-# BEAM sup
+# graphposterior
 
-A Python package for analyzing [BEAM (Bayesian Evolutionary Analysis of Metastasis)](https://github.com/StephenStaklinski/beam) output.
+A Python package for analyzing [BEAM (Bayesian Evolutionary Analysis of Metastasis)](https://github.com/CshlSiepelLab/beam) output as well as other method outputs that provide a posterior distribution of tissue migration graphs in a nexus tree file format.
 
 <div style="text-align: left;">
-  <img src="beam_sup.png" alt="example outputs" width="250"/>
+  <img src="graphposterior.png" alt="example outputs" width="250"/>
 </div>
 
 ## Installation
 
-You can install the main python package using pip:
+The main python package can be installed using pip after ensuring installation of python 3.10 (the python version requirement is only due to the dated ete3 dependency, so we plan to remove this later):
 
 ```bash
-git clone https://github.com/StephenStaklinski/beam_sup.git
-cd beam_sup
+git clone https://github.com/CshlSiepelLab/graphposterior.git
+cd graphposterior
 pip install -e .
 ```
 
-If you want to use the simulation related functionalities, then you must compile the `simulate` executable that relies on a c++ code base for efficient agent based model generation of a metastatic cancer population. To compile this executable, obtain a gcc compiler if you do not already have one available and then run the following from within `beam_sup/simulator_cpp`:
+If you want to use the simulation related functionalities, then you must compile the `simulate` executable that relies on a c++ code base for efficient agent based model generation of a metastatic cancer population. To compile this executable, obtain a gcc compiler if you do not already have one available and then run the following from within `graphposterior/simulator_cpp`:
 ```
 mkdir build
 cd build
@@ -26,15 +26,15 @@ make
 
 The compilation does rely on [LEMON](https://lemon.cs.elte.hu/trac/lemon) that should be handled by the provided pre-installed package, or otherwise can be installed from source and the `CMakeLists.txt` updated to find the correct path.
 
-This should produce an executable file at `./beam_sup/simulator_cpp/build/simulate` which is essential for the simulation process and needs to be added to your `PATH` to access it from within the python package functions. It is also possible to just use this agent based model directly without the crispr barcode overlay if desired, just run `simulate --help` to see the options. 
+This should produce an executable file at `./graphposterior/simulator_cpp/build/simulate` which is essential for the simulation process and needs to be added to your `PATH` to access it from within the python package functions. It is also possible to just use this agent based model directly without the crispr barcode overlay if desired, just run `simulate --help` to see the options. 
 
-## Basic usage for interpreting BEAM results
+## Basic usage for interpreting posterior results
 
 ```python
-from beam_sup import BeamResults
+from graphposterior import PosteriorResults
 
-# Initialize with BEAM output files
-results = BeamResults(
+# Initialize with output files
+results = PosteriorResults(
     trees_file = "examples/data/example.trees", 
     log_file = "examples/data/example.log", 
     primary_tissue="LL",
@@ -86,7 +86,7 @@ To view options to modify the simulation run from defaults, then run `run_met_ca
 
 ## Basic usage for other functions
 
-There are many other functions available, most of which are called by seperate analysis pipelines in producing results for the BEAM methods paper. These functions just need to be imported explicitly such as `from beam_sup.module import function` where module is the name of the script in `beam_sup/` with the function wanted.
+There are many other functions available, most of which are called by seperate analysis pipelines in producing results for the BEAM methods paper. These functions just need to be imported explicitly such as `from graphposterior.module import function` where module is the name of the script in `graphposterior/` with the function wanted.
 
 ## License
 

@@ -9,7 +9,7 @@ DEFAULT_CORES = 1
 DEFAULT_MIN_PROB_THRESHOLD = 0.5
 
 
-class BeamResults:
+class PosteriorResults:
     """A class to handle migration graph posterior distribution analysis."""
 
     def _ensure_output_dir(self, filepath: Optional[str]) -> None:
@@ -28,7 +28,7 @@ class BeamResults:
         self, trees_file: str, primary_tissue: str, total_time: float, log_file: str = None, cores: int = DEFAULT_CORES, state_key: str = "location", burnin: float = DEFAULT_BURNIN
     ) -> None:
         """
-        Initialize BeamResults with BEAM output files.
+        Initialize PosteriorResults with posterior nexus output files.
 
         Args:
             trees_file: Path to the .trees file
@@ -38,13 +38,13 @@ class BeamResults:
             state_key: Key in the node annotations for tissue states. Default is "location".
             cores: Number of CPU threads to use for parallel processing
         """
-        from .data_loader import load_beam_files
+        from .data_loader import load_output_files
         
         self.trees_file = trees_file
         self.log_file = log_file
         self.primary_tissue = primary_tissue
         self.total_time = total_time
-        self.trees, self.log_data = load_beam_files(trees_file, log_file)
+        self.trees, self.log_data = load_output_files(trees_file, log_file)
         self.consensus_graph = None
         self.metastasis_times = None
         self.cores = cores
@@ -53,7 +53,7 @@ class BeamResults:
 
     def info(self) -> None:
         """Print information about the loaded data."""
-        print("\nBeamResults Object Information:")
+        print("\nPosteriorResults Object Information:")
         print("===============================")
         print(f"Trees file: {self.trees_file}")
         print(f"Log file: {self.log_file}")

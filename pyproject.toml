@@ -3,9 +3,9 @@ requires = ["setuptools>=64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "beam_sup"
+name = "graphposterior"
 version = "0.1.0"
-description = "A Python package for analyzing BEAM output"
+description = "A Python package for analyzing a posterior distribution of tissue migration graphs"
 authors = [
     {name = "Stephen Staklinski", email = "staklins@cshl.edu"},
 ]
@@ -35,13 +35,13 @@ test = [
 ]
 
 [project.scripts]
-run_met_cancer_barcode_simulation = "beam_sup.core:run_full_simulation"
-overlay_barcode_only_simulation = "beam_sup.core:simulate_barcode_overlay_only"
+run_met_cancer_barcode_simulation = "graphposterior.core:run_full_simulation"
+overlay_barcode_only_simulation = "graphposterior.core:simulate_barcode_overlay_only"
 
 [project.urls]
-Homepage = "https://github.com/StephenStaklinski/beam_sup"
+Homepage = "https://github.com/StephenStaklinski/graphposterior"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "--cov=beam_sup --cov-report=term-missing" 
+addopts = "--cov=graphposterior --cov-report=term-missing" 

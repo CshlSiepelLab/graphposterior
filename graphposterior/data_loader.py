@@ -6,7 +6,7 @@ from typing import Tuple
 
 def load_trees_file(trees_file: str) -> TreeList:
     """
-    Load and parse a BEAM trees file.
+    Load and parse a nexus trees file.
 
     Args:
         trees_file: Path to the .trees file
@@ -28,7 +28,7 @@ def load_trees_file(trees_file: str) -> TreeList:
 
 def load_log_file(log_file: str) -> pd.DataFrame:
     """
-    Load and parse a BEAM log file.
+    Load and parse a posterior log file.
 
     Args:
         log_file: Path to the .log file
@@ -51,12 +51,11 @@ def load_log_file(log_file: str) -> pd.DataFrame:
     return log_data
 
 
-def load_beam_files(
+def load_output_files(
     trees_file: str, log_file: str
 ) -> Tuple[TreeList, pd.DataFrame]:
     """
-    Load both BEAM output files.
-
+    Load both posterior output files.
     Args:
         trees_file: Path to the .trees file
         log_file: Path to the .log file
