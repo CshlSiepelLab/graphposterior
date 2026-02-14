@@ -125,6 +125,7 @@ def overlay_simulated_crispr_barcode_data(
     outputdir: str,
     outprefix: str,
     num_sites: int = 50,
+    num_barcodes: int = 1,
     mutationrate: float = 0.1,
     heritable_silencing_rate: float = 0.0001,
     stochastic_silencing_rate: float = 0.01
@@ -251,8 +252,8 @@ def overlay_simulated_crispr_barcode_data(
     }
 
     lt_sim = Cas9LineageTracingDataSimulator(
-        number_of_cassettes=num_sites,
-        size_of_cassette=1,
+        number_of_cassettes=num_barcodes,
+        size_of_cassette=num_sites,
         mutation_rate=mut_rates,
         state_generating_distribution=lambda: np.random.exponential(1e-5),
         number_of_states=100,

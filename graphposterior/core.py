@@ -420,7 +420,13 @@ def run_full_simulation():
         "--num_sites",
         type=int,
         default=50,
-        help="Number of CRISPR cassettes (cuts) to simulate.",
+        help="Number of cutsites per CRISPR barcode.",
+    )
+    parser.add_argument(
+        "--num_barcodes",
+        type=int,
+        default=1,
+        help="Number of CRISPR barcodes integrated per cell to simulate.",
     )
     parser.add_argument(
         "--mutationrate", type=float, default=0.1, help="Mutation rate per cassette."
@@ -472,6 +478,7 @@ def run_full_simulation():
         outputdir=args.outdir,
         outprefix=args.outprefix,
         num_sites=args.num_sites,
+        num_barcodes=args.num_barcodes,
         mutationrate=args.mutationrate,
         heritable_silencing_rate=args.heritable_silencing_rate,
         stochastic_silencing_rate=args.stochastic_silencing_rate
