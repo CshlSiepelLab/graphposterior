@@ -66,6 +66,9 @@ results.plot_probability_graph(output_file="examples/output/probability_graph.pd
 # Plot consensus graph with edges above threshold included
 results.plot_thresholded_graph(threshold=[0.5, 0.75, 0.90], output_file_prefix="examples/output/thresholded_graph")
 
+# Calculate seeding topologies across posterior samples
+results.get_seeding_topologies(output_file="examples/output/seeding_topologies.tsv")
+
 # Calculate mutual information based on a migration count matrix from traversing the posterior trees
 results.compute_posterior_mutual_info(output_file_matrix="examples/output/mutual_info_matrix.csv", output_file_information="examples/output/mutual_info.txt")
 
