@@ -232,7 +232,8 @@ class PosteriorResults:
         to frequencies across all categories.
 
         Args:
-            include_self_migrations: Whether to count tree edges that do not change tissues or not (False by default).
+            report_freqs: Whether to report frequencies across categories (default) or the raw edge counts across trees.
+            include_self_migrations: Whether to count tree edges that do not change tissues or not (Default if False).
             output_file: Optional path to write the seeding topology frequencies to.
 
         Returns:
