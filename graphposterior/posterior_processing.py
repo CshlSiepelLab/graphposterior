@@ -180,6 +180,85 @@ def sample_trees(
 
     return sampled_trees
 
+def get_seeding_topologies(trees: TreeList,
+                            primary_tissue: str,
+                            burnin_percent: float = 0.0,
+                            state_key: str = "location",
+                            report_freqs = True,
+                            include_self_migrations = False
+                            ) -> Dict[str, float]:
+    if not isinstance(trees, TreeList):
+        raise ValueError("Trees must be a TreeList object")
+    if len(trees) == 0:
+        raise ValueError("No trees to analyze")
+    print("\nCalculating seeding topologies...")
+    # Process posterior trees
+    num_trees = len(trees)
+    num_discard = round(num_trees * burnin_percent)
+    trees_to_analyze = trees[num_discard:]
+    print(f"  Analyzing {len(trees_to_analyze)} trees (after {num_discard} burnin)")
+    
+    seeding_topologies = {
+        "primary_to_met": 0,
+        "met_to_met": 0,
+        "primary_reseeding": 0
+    }
+    
+    if include_self_migrations:
+        seeding_topologies["primary_confined"] = 0
+        seeding_topologies["met_confined"] = 0
+    
+    # Iterate over trees
+    for tree in trees_to_analyze:
+        for node in tree.preorder_node_iter():
+            if node.parent_node is None:
+                # Consider the origin branch when starting at the root, where the origin is known to be the input primary tissue
+                parent_state = primary_tissue
+            else:
+                # Get the parent tissue
+                parent_state = node.parent_node.annotations.get_value(state_key)
+                
+            # Get the child tissue
+            child_state  = node.annotations.get_value(state_key)
+
+            # Error if missing either parent or child tissue annotations
+            if parent_state is None or child_state is None:
+                raise ValueError("Tissue annotation not found.")
+
+            parent_is_primary = (parent_state == primary_tissue)
+            child_is_primary  = (child_state  == primary_tissue)
+
+            if parent_state == child_state:
+                # Self-migration / within-tissue edge
+                if include_self_migrations:
+                    if parent_is_primary:
+                        seeding_topologies["primary_confined"] += 1
+                    else:
+                        seeding_topologies["met_confined"] += 1
+            else:
+                # Cross-tissue migration edge
+                if parent_is_primary and not child_is_primary:
+                    # Primary to met
+                    seeding_topologies["primary_to_met"] += 1
+                elif not parent_is_primary and not child_is_primary:
+                    # Met to met
+                    seeding_topologies["met_to_met"] += 1
+                elif not parent_is_primary and child_is_primary:
+                    # Met to primary (primary reseeding)
+                    seeding_topologies["primary_reseeding"] += 1
+    
+    if not report_freqs:
+        # Return the raw edge counts
+        return seeding_topologies
+
+    # Normalize counts to frequencies across seeding topology types
+    total_count = sum(seeding_topologies.values())
+    if total_count == 0:
+        raise ValueError("No migration edges were counted across all trees.")
+    seeding_topology_freqs = {key: (value / total_count) for key, value in seeding_topologies.items()}
+        
+    return seeding_topology_freqs
+
 
 def process_tree_for_metastasis_times(tree, primary_tissue, total_time, state_key="location", verify_ultrametric=False):
     # Create a copy to modify

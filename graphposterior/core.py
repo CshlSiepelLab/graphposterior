@@ -46,6 +46,7 @@ class PosteriorResults:
         self.total_time = total_time
         self.trees, self.log_data = load_output_files(trees_file, log_file)
         self.consensus_graph = None
+        self.seeding_topologies = None
         self.metastasis_times = None
         self.cores = cores
         self.state_key = state_key
@@ -218,6 +219,49 @@ class PosteriorResults:
             threshold=threshold,
             consensus_graph=self.consensus_graph,
         )
+    
+    def get_seeding_topologies(
+        self,
+        report_freqs = True,
+        include_self_migrations = False,
+        output_file: Optional[str] = None
+    ) -> Dict[str, float]:
+        """
+        Accumulate counts for each seeding topologies from migration edges in the posterior trees, with
+        or without including self migrations from edges with no tissue change, and then normalize those counts
+        to frequencies across all categories.
+
+        Args:
+            include_self_migrations: Whether to count tree edges that do not change tissues or not (False by default).
+            output_file: Optional path to write the seeding topology frequencies to.
+
+        Returns:
+            Dict[str, float]: Dictionary mapping seeding topologies to their frequencies
+        """
+        from .posterior_processing import get_seeding_topologies
+
+        if self.trees is None or len(self.trees) == 0:
+            raise ValueError("No trees to analyze")
+
+        # Only compute consensus graph if not already computed or if force_recompute is True
+        if self.seeding_topologies is not None:
+            print("Overwriting existing seeding topologies.")
+
+        self.seeding_topologies = get_seeding_topologies(
+                    self.trees, self.primary_tissue, self.burnin, 
+                    self.state_key, report_freqs=report_freqs,
+                    include_self_migrations=include_self_migrations)
+
+        if output_file:
+            self._ensure_output_dir(output_file)
+            # Write to file
+            with open(output_file, "w") as file:
+                all_seeding_topologies = list(self.seeding_topologies.keys())
+                all_frequencies = list(self.seeding_topologies.values())
+                file.write("\t".join(all_seeding_topologies) + "\n")
+                file.write("\t".join(str(f) for f in all_frequencies) + "\n")
+
+        return self.seeding_topologies
 
     def compute_posterior_mutual_info(
         self,
